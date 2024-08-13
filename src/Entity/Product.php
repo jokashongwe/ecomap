@@ -49,11 +49,19 @@ class Product
     #[ORM\OneToMany(targetEntity: ProductTransformation::class, mappedBy: 'product')]
     private Collection $productTransformations;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $sector = null;
+
     public function __construct()
     {
         $this->pricings = new ArrayCollection();
         $this->exploitations = new ArrayCollection();
         $this->productTransformations = new ArrayCollection();
+    }
+
+    public function __toString(): string
+    {
+        return $this->name;
     }
 
     public function getId(): ?int
@@ -207,6 +215,18 @@ class Product
                 $productTransformation->setProduct(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getSector(): ?string
+    {
+        return $this->sector;
+    }
+
+    public function setSector(?string $sector): static
+    {
+        $this->sector = $sector;
 
         return $this;
     }
