@@ -15,23 +15,23 @@ class Product
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["producer"])]
+    #[Groups(["producer", "product"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["producer"])]
+    #[Groups(["producer", "product"])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(["producer"])]
+    #[Groups(["producer", "product"])]
     private ?string $description = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["producer"])]
+    #[Groups(["producer", "product"])]
     private ?string $picture = null;
 
     #[ORM\Column]
-    #[Groups(["producer"])]
+    #[Groups(["producer", "product"])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'products')]
