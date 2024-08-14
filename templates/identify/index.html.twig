@@ -9,10 +9,10 @@
 	</head>
 	<body>
 		<div class="container">
-            <div style="display: flex; flex-direction: row; column-gap: 2rem" >
-                <img src="/logo-rmd.png" style="height: 50px"/>
-                <h2>Formulaire d'idenification</h2>
-            </div>
+			<div style="display: flex; flex-direction: row; column-gap: 2rem">
+				<img src="/logo-rmd.png" style="height: 50px"/>
+				<h2>Formulaire d'idenification</h2>
+			</div>
 			<form id="producerForm">
 				<fieldset>
 					<legend>Informations du Producteur</legend>
@@ -157,66 +157,79 @@
 
 				<input type="submit" value="Envoyer"/>
 			</form>
-		</body>
+		</div>
+        <script>
+      $(document).ready(function () {
+        $("#producerForm").on("submit", function (event) {
+          event.preventDefault();
+
+          // Récupération des données du formulaire
+          const jsonData = {
+            producer: {
+              firstname: $("#firstname").val(),
+              lastname: $("#lastname").val(),
+              middlename: $("#middlename").val(),
+              birthdate: $("#birthdate").val(),
+              gender: $("#gender").val(),
+              phone: $("#phone").val() || null,
+              email: $("#email").val() || null,
+              address: {
+                country: $("#country").val(),
+                province: $("#province").val(),
+                city: $("#city").val(),
+                territory: $("#territory").val(),
+                sector: $("#sector").val(),
+                village: $("#village").val(),
+              },
+              numberOfChildren: parseInt($("#numberOfChildren").val()),
+              maritalStatus: $("#maritalStatus").val(),
+              handicap: $("#handicap").val(),
+              averageMonthIncome: parseFloat($("#averageMonthIncome").val()),
+              corporations: [],
+            },
+            fields: [
+              {
+                surface_acres: parseFloat($("#surface_acres").val()),
+                startedAt: $("#startedAt").val(),
+                status: $("#status").val(),
+                productId: parseInt($("#productId").val()),
+                address: {
+                  province: $("#fieldProvince").val(),
+                  district: $("#district").val(),
+                  sector: $("#fieldSector").val(),
+                  village: $("#fieldVillage").val(),
+                  lat: parseFloat($("#lat").val()),
+                  lng: parseFloat($("#lng").val()),
+                },
+                productionPhases: [
+                  {
+                    title: $("#productionPhaseTitle").val(),
+                    seedSource: $("#seedSource").val(),
+                    fertilizer: $("#fertilizer").val(),
+                    operationnalMode: $("#operationnalMode").val(),
+                    season: $("#season").val(),
+                    year: parseInt($("#year").val()),
+                  },
+                ],
+              },
+            ],
+          };
+
+          type: "POST",
+            url: "/api/v1/producers",
+            data: jsonData,
+            success: function(e){
+                console.log(e)
+            },
+            faiure: function (a, b, c){
+                console.log(a, b,c)
+            }
+            dataType: "application-json"
+
+          
+        });
+      });
+    </script>
 	</body>
-</html></div><script>
-$(document).ready(function () {
-$("#producerForm").on("submit", function (event) {
-event.preventDefault();
-
-// Récupération des données du formulaire
-const jsonData = {
-producer: {
-firstname: $("#firstname").val(),
-lastname: $("#lastname").val(),
-middlename: $("#middlename").val(),
-birthdate: $("#birthdate").val(),
-gender: $("#gender").val(),
-phone: $("#phone").val() || null,
-email: $("#email").val() || null,
-address: {
-country: $("#country").val(),
-province: $("#province").val(),
-city: $("#city").val(),
-territory: $("#territory").val(),
-sector: $("#sector").val(),
-village: $("#village").val()
-},
-numberOfChildren: parseInt($("#numberOfChildren").val()),
-maritalStatus: $("#maritalStatus").val(),
-handicap: $("#handicap").val(),
-averageMonthIncome: parseFloat($("#averageMonthIncome").val()),
-corporations: []
-},
-fields: [
-{
-surface_acres: parseFloat($("#surface_acres").val()),
-startedAt: $("#startedAt").val(),
-status: $("#status").val(),
-productId: parseInt($("#productId").val()),
-address: {
-province: $("#fieldProvince").val(),
-district: $("#district").val(),
-sector: $("#fieldSector").val(),
-village: $("#fieldVillage").val(),
-lat: parseFloat($("#lat").val()),
-lng: parseFloat($("#lng").val())
-},
-productionPhases: [
-{
-title: $("#productionPhaseTitle").val(),
-seedSource: $("#seedSource").val(),
-fertilizer: $("#fertilizer").val(),
-operationnalMode: $("#operationnalMode").val(),
-season: $("#season").val(),
-year: parseInt($("#year").val())
-},
-]
-},
-]
-};
-
-// Affichage du JSON généré
-$("#output").text(JSON.stringify(jsonData, null, 2));
-});
-});</script></body></html>
+	
+</html>
