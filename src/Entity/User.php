@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -38,6 +40,17 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     #[ORM\Column]
     private array $roles = [];
+
+    /**
+     * @var Collection<int, Producer>
+     */
+    #[ORM\OneToMany(targetEntity: Producer::class, mappedBy: 'createdBy')]
+    private Collection $producers;
+
+    public function __construct()
+    {
+        $this->producers = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -144,6 +157,36 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Producer>
+     */
+    public function getProducers(): Collection
+    {
+        return $this->producers;
+    }
+
+    public function addProducer(Producer $producer): static
+    {
+        if (!$this->producers->contains($producer)) {
+            $this->producers->add($producer);
+            $producer->setCreatedBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProducer(Producer $producer): static
+    {
+        if ($this->producers->removeElement($producer)) {
+            // set the owning side to null (unless already changed)
+            if ($producer->getCreatedBy() === $this) {
+                $producer->setCreatedBy(null);
+            }
+        }
 
         return $this;
     }

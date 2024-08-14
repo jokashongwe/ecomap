@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 class Product
@@ -14,21 +15,27 @@ class Product
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["producer"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["producer"])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(["producer"])]
     private ?string $description = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["producer"])]
     private ?string $picture = null;
 
     #[ORM\Column]
+    #[Groups(["producer"])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'products')]
+    #[Groups(["producer"])]
     private ?TypeProduct $typeProduct = null;
 
     /**
@@ -41,15 +48,18 @@ class Product
      * @var Collection<int, Exploitation>
      */
     #[ORM\OneToMany(targetEntity: Exploitation::class, mappedBy: 'product')]
+    #[Groups(["producer"])]
     private Collection $exploitations;
 
     /**
      * @var Collection<int, ProductTransformation>
      */
     #[ORM\OneToMany(targetEntity: ProductTransformation::class, mappedBy: 'product')]
+    #[Groups(["producer"])]
     private Collection $productTransformations;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["producer"])]
     private ?string $sector = null;
 
     public function __construct()

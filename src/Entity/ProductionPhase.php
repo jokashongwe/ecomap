@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ProductionPhaseRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: ProductionPhaseRepository::class)]
 class ProductionPhase
@@ -11,30 +12,39 @@ class ProductionPhase
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["producer"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["producer"])]
     private ?string $title = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["producer"])]
     private ?string $seedSource = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["producer"])]
     private ?string $fertilizer = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["producer"])]
     private ?string $operationnalMode = null;
 
     #[ORM\ManyToOne(inversedBy: 'productionPhases')]
+    #[Groups(["producer"])]
     private ?Exploitation $exploitation = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["producer"])]
     private ?string $season = null;
 
     #[ORM\Column]
+    #[Groups(["producer"])]
     private ?int $year = null;
 
     #[ORM\Column]
+    #[Groups(["producer"])]
     private ?\DateTimeImmutable $createdAt = null;
 
     public function getId(): ?int

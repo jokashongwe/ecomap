@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: CorporationRepository::class)]
 class Corporation
@@ -14,27 +15,35 @@ class Corporation
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["producer"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["producer"])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(["producer"])]
     private ?string $details = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["producer"])]
     private ?string $logo = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Groups(["producer"])]
     private ?\DateTimeInterface $creationDate = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[Groups(["producer"])]
     private ?\DateTimeInterface $endedDate = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(["producer"])]
     private ?bool $hasLegalExistance = null;
 
     #[ORM\Column]
+    #[Groups(["producer"])]
     private ?\DateTimeImmutable $createdAt = null;
 
     /**

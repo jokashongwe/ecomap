@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: ProducerRepository::class)]
 class Producer
@@ -14,58 +15,79 @@ class Producer
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["producer"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["producer"])]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["producer"])]
     private ?string $lastname = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["producer"])]
     private ?string $middlename = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Groups(["producer"])]
     private ?\DateTimeInterface $birthdate = null;
 
     #[ORM\Column(length: 20)]
+    #[Groups(["producer"])]
     private ?string $gender = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["producer"])]
     private ?string $picture = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["producer"])]
     private ?string $phone = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["producer"])]
     private ?string $email = null;
 
     #[ORM\ManyToOne(inversedBy: 'producers')]
+    #[Groups(["producer"])]
     private ?AddressProducer $address = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["producer"])]
     private ?string $bankAcount = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(["producer"])]
     private ?int $numberOfChildren = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["producer"])]
     private ?string $maritalStatus = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["producer"])]
     private ?string $handicap = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
+    #[Groups(["producer"])]
     private ?string $averageMonthIncome = null;
 
     #[ORM\Column]
+    #[Groups(["producer"])]
     private ?\DateTimeImmutable $createdAt = null;
 
     /**
      * @var Collection<int, Corporation>
      */
     #[ORM\ManyToMany(targetEntity: Corporation::class, inversedBy: 'producers')]
+    #[Groups(["producer"])]
     private Collection $corporations;
+
+    #[ORM\ManyToOne(inversedBy: 'producers')]
+    #[Groups(["producer"])]
+    private ?User $createdBy = null;
 
     public function __construct()
     {
@@ -277,6 +299,18 @@ class Producer
     public function removeCorporation(Corporation $corporation): static
     {
         $this->corporations->removeElement($corporation);
+
+        return $this;
+    }
+
+    public function getCreatedBy(): ?User
+    {
+        return $this->createdBy;
+    }
+
+    public function setCreatedBy(?User $createdBy): static
+    {
+        $this->createdBy = $createdBy;
 
         return $this;
     }
