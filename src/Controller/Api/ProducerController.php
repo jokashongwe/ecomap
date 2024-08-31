@@ -11,6 +11,7 @@ use App\Entity\ProductionPhase;
 use App\Repository\AddressExploitationRepository;
 use App\Repository\AddressProducerRepository;
 use App\Repository\ExploitationRepository;
+use App\Repository\ProducerRepository;
 use App\Repository\ProductRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -31,6 +32,7 @@ class ProducerController extends AbstractController
         SerializerInterface $serializer
     ) {
         try {
+            $this->json(["Message" => "KOKO"], 200);
             /**
              * Identify a new producer with all informations
              */
@@ -52,7 +54,7 @@ class ProducerController extends AbstractController
             $corporations = $producerInfo["corporations"];
             $corpo = null;
             $manager = $managerRegistry->getManager();
-            if(empty($corporations)){
+            if (empty($corporations)) {
                 $corpo = new Corporation();
                 $corpo->setCreatedAt(new \DateTimeImmutable());
                 $corpo->setCreationDate(new \DateTime());
@@ -87,17 +89,30 @@ class ProducerController extends AbstractController
             $manager->persist($producerAddress);
             $manager->persist($producer);
 
+            $product = null;
+
             $fields = $request->getPayload()->all()["fields"];
             if (!empty($fields)) {
                 foreach ($fields as $field) {
-                    $pId = $field["productId"];
-                    $product = $productRepository->find($pId);
-                    if (empty($product)) {
-                        return $this->json(["message" => "No Product Found with ID: " . $pId], 404);
+                    
+                    if (array_key_exists("products", $field)) {
+                        $products = $field["products"];
+                        foreach ($products as $prod) {
+                            $res = $productRepository->findOneBy(['name' => $prod]);
+                            if (!is_null($res)) {
+                                $product = $res;
+                            }
+                        }
+                    } else {
+                        $pId = $field["productId"];
+                        $product = $productRepository->find($pId);
+                        if (empty($product)) {
+                            return $this->json(["message" => "No Product Found with ID: " . $pId], 404);
+                        }
                     }
                     $exp = new Exploitation();
                     $exp->setSurfaceAcres($field["surface_acres"]);
-                    $exp->setStartedAt(date_create_from_format("Y-m-d", $field["startedAt"]));
+                    $exp->setStartedAt(date_create_from_format("Y-m-d", '2024-01-12'));
                     $exp->setStatus($field["status"]);
                     $exp->setProduct($product);
                     $exp->setCorporation($corpo);
@@ -113,7 +128,7 @@ class ProducerController extends AbstractController
                         $adr->setCity("NA");
                     }
                     $manager->persist($adr);
-                    
+
 
                     $exp->setAddress($adr);
                     $exp->setCreatedAt(new \DateTimeImmutable());
@@ -131,16 +146,25 @@ class ProducerController extends AbstractController
                             $expPhase->setYear($ph["year"]);
                             $expPhase->setExploitation($exp);
                             $expPhase->setCreatedAt(new \DateTimeImmutable());
-                            
+
                             $manager->persist($expPhase);
                         }
                     }
                 }
             }
             $manager->flush();
-            return $this->json(["producer" => json_decode($serializer->serialize($producer, 'json', ['groups' => ['producer']])) ]);
+            return $this->json(["producer" => json_decode($serializer->serialize($producer, 'json', ['groups' => ['producer']]))]);
         } catch (\Throwable $th) {
-            return $this->json(["Message" => $th->getMessage()], 500);
+            return $this->json(["Message" => $th->getMessage()], 200);
         }
+    }
+
+    #[Route('/api/v1/producers', name: 'app_producers_all', methods: ['GET'])]
+    public function all(
+        ProducerRepository $producerRepository,
+        SerializerInterface $serializer
+    ){
+        $all = $producerRepository->findAll();
+        return $this->json(["producers" => json_decode($serializer->serialize($all, 'json', ['groups' => ['producer']]))]);
     }
 }
